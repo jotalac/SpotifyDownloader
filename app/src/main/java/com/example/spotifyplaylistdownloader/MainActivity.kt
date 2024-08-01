@@ -28,6 +28,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
@@ -77,6 +80,38 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
+        val btnDownload = findViewById<Button>(R.id.menuDownloadBtn)
+        val btnHistory = findViewById<Button>(R.id.menuHistoryBtn)
+        val btnHelp = findViewById<Button>(R.id.menuHelpBtn)
+
+        var selectedButton = btnDownload
+
+        val colorWhite = resources.getColor(R.color.white)
+        val colorLightGray = resources.getColor(R.color.light_gray)
+
+        //set the actions for the buttons and make it with the color
+        btnDownload.setOnClickListener {
+            findNavController(1).navigate(R.id.action_menuFragment_to_inputFragment)
+            if (selectedButton != btnDownload) {
+                btnDownload.setTextColor(colorWhite)
+                selectedButton.setTextColor(colorLightGray)
+                selectedButton = btnDownload
+            }
+        }
+        btnHistory.setOnClickListener {
+            if (selectedButton != btnHistory) {
+                btnHistory.setTextColor(colorWhite)
+                selectedButton.setTextColor(colorLightGray)
+                selectedButton = btnHistory
+            }
+        }
+        btnHelp.setOnClickListener {
+            if (selectedButton != btnHelp) {
+                btnHelp.setTextColor(colorWhite)
+                selectedButton.setTextColor(colorLightGray)
+                selectedButton = btnHelp
+            }
+        }
 
         downloadDirecotry = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString()
         appContext = this
@@ -90,6 +125,7 @@ class MainActivity : AppCompatActivity() {
         myFunNames = myModule["get_names"]!!
 
     }
+
 
 
 }

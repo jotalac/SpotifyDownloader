@@ -8,130 +8,54 @@
     android:orientation="vertical"
     android:background="@color/dark_gray">
 
-<!--    <androidx.appcompat.widget.Toolbar-->
-<!--        android:id="@+id/toolbarSpotify"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="?actionBarSize"-->
-<!--        android:background="@color/black"-->
-<!--        app:title="Spotify downloader"-->
-<!--        app:titleTextColor="@color/green"-->
-<!--        />-->
+    <LinearLayout
+        android:id="@+id/menuContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingVertical="5dp">
 
-<!--    <EditText-->
-<!--        android:id="@+id/editText"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:background="@drawable/edittext_entry"-->
-<!--        android:inputType="text"-->
-<!--        android:hint="Paste a playlist link"-->
-<!--        android:textAlignment="center"-->
-<!--        android:textColorHint="@color/light_gray"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/toolbarSpotify"-->
-<!--        android:layout_marginTop="50dp"-->
-<!--        android:layout_marginHorizontal="38dp"-->
-<!--        android:paddingHorizontal="15dp"-->
-<!--        />-->
+        <Button
+            android:id="@+id/menuDownloadBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Download"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            />
 
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:id="@+id/container_folder"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/editText"-->
-<!--        android:paddingHorizontal="38dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        >-->
+        <Button
+            android:id="@+id/menuHistoryBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="History"
+            android:textColor="@color/light_gray"
+            android:textSize="20dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            />
 
-<!--        <Button-->
-<!--            android:id="@+id/button_paste"-->
-<!--            android:layout_width="120dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:text="Paste"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            android:backgroundTint="@color/gray"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="20sp"-->
-<!--            android:paddingTop="0dp"-->
-<!--            />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/playlist_name"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Spotify downloader"-->
-<!--            android:textSize="15sp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            android:textColor="@color/light_gray"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"/>-->
+        <Button
+            android:id="@+id/menuHelpBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Help"
+            android:textColor="@color/light_gray"
+            android:textSize="20dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            />
 
 
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<!--    <Button-->
-<!--        android:id="@+id/button_download"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:text="Download all"-->
-<!--        android:backgroundTint="@color/green"-->
-<!--        android:textColor="@color/white"-->
-<!--        android:textSize="20sp"-->
-<!--        android:paddingTop="0dp"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/container_folder"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        android:layout_marginTop="20sp"-->
-<!--        android:layout_marginHorizontal="38dp"-->
-<!--        android:enabled="false"-->
-<!--        />-->
-
-<!--    <ScrollView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="400dp"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:layout_marginEnd="20dp"-->
-<!--        android:layout_marginTop="20sp"-->
-<!--        android:layout_marginBottom="20dp"-->
-<!--        android:paddingBottom="15dp"-->
-<!--        android:background="@drawable/edittext_entry"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/button_download">-->
-
-<!--&lt;!&ndash;        <LinearLayout&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_width="match_parent"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_height="wrap_content"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:orientation="vertical">&ndash;&gt;-->
-
-<!--&lt;!&ndash;            <TextView&ndash;&gt;-->
-<!--&lt;!&ndash;                android:id="@+id/display_text"&ndash;&gt;-->
-<!--&lt;!&ndash;                android:layout_width="wrap_content"&ndash;&gt;-->
-<!--&lt;!&ndash;                android:layout_height="wrap_content"&ndash;&gt;-->
-<!--&lt;!&ndash;                android:text="*Tracks in plylist*"&ndash;&gt;-->
-<!--&lt;!&ndash;                android:layout_marginStart="20dp"&ndash;&gt;-->
-<!--&lt;!&ndash;                android:textColor="@color/white"&ndash;&gt;-->
-<!--&lt;!&ndash;                android:layout_marginTop="20dp"&ndash;&gt;-->
-
-<!--&lt;!&ndash;                />&ndash;&gt;-->
-
-<!--&lt;!&ndash;        </LinearLayout>&ndash;&gt;-->
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:id="@+id/recycler_view"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_marginHorizontal="20dp"-->
-<!--            android:layout_marginVertical="10dp"-->
-<!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>-->
-
-<!--    </ScrollView>-->
+    </LinearLayout>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/menuContainer"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph" />
 

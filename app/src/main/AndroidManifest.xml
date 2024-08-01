@@ -17,6 +17,7 @@
 
 
 
+
     <application
         android:name=".DownloadingApp"
         android:allowBackup="true"
