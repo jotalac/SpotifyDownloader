@@ -1,9 +1,12 @@
+import pytube.exceptions
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy.exceptions import SpotifyException
 from youtubesearchpython import VideosSearch
-import yt_dlp as youtube_dl
+from pytube import YouTube
 import os
+import shutil
+
 
 # using spotipy
 def get_playlist_name(sp, playlist):
@@ -33,7 +36,6 @@ def get_thumbnail(sp, playlist):
     except SpotifyException:
         url = sp.album(playlist)["images"][0]["url"]
         return url
-
 
 def get_names_list(sp, playlist):
     try:
@@ -95,26 +97,17 @@ def download(song, artist, directory):
         return ""
 
     # download
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': os.path.join(directory, '%(title)s.%(ext)s'),
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-        'quiet': True,
-        'noplaylist': True
-    }
 
+    yt = YouTube(video_link)
     try:
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(video_link, download=True)
-            new_file = ydl.prepare_filename(info_dict).replace(".webm", ".mp3").replace(".m4a", ".mp3")
-            if os.path.exists(new_file):
-                return new_file
-    except youtube_dl.utils.DownloadError:
-        print("An error occurred during download.")
+        output_file = yt.streams.get_audio_only(subtype="mp4").download(directory)
+        base_file = os.path.splitext(output_file)[0]
+        new_file = base_file + ".mp3"
+        os.rename(output_file, new_file)
+        #shutil.move(new_file, "/storage/emulated/0/Download/")
+    except pytube.exceptions.AgeRestrictedError:
+        print("age restricted, cannot download")
         return ""
 
-    return ""
+    return new_file
+
