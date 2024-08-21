@@ -20,6 +20,7 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
@@ -62,19 +63,15 @@ class InputFragment : Fragment() {
 
         //widgets
         val continueButton = view.findViewById<Button>(R.id.continueButton)
-        val pasteButton = view.findViewById<Button>(R.id.pasteClipboardButton)
+        val pasteButton = view.findViewById<ImageButton>(R.id.pasteClipboardButton)
         val editText = view.findViewById<EditText>(R.id.editText)
-        val toolbar = view.findViewById<Toolbar>(R.id.toolbarInput)
 
 
         //initilaize the permission launcher
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val granted = permissions.entries.all { it.value }
             if (!granted) {
-                Toast.makeText(context, "Denied permissions - RESTART THE APP - allow permissions", Toast.LENGTH_SHORT).show()
-                continueButton.isEnabled = false
-                pasteButton.isEnabled = false
-                pasteButton.text = "Restart app"
+                Toast.makeText(context, "Notifications are disabled - allow notification in settings", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -131,7 +128,15 @@ class InputFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("link", spotifyLink)
                 }
-                findNavController().navigate(R.id.action_inputFragment_to_playlistFragment, bundle)
+
+                val playlistFragment = PlaylistFragment().apply {
+                    arguments = bundle
+                }
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, playlistFragment)
+                    .addToBackStack(null)
+                    .commit()
             }
         }
 
@@ -141,35 +146,39 @@ class InputFragment : Fragment() {
     private fun updateOrRequestPermissions() {
         val permissionsToRequest = mutableListOf<String>()
 
-        val hasReadPermission = ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
-        val hasWritePermission = ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
+//        val hasReadPermission = ContextCompat.checkSelfPermission(
+//            requireContext(),
+//            Manifest.permission.READ_EXTERNAL_STORAGE
+//        ) == PackageManager.PERMISSION_GRANTED
+//        val hasWritePermission = ContextCompat.checkSelfPermission(
+//            requireContext(),
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE
+//        ) == PackageManager.PERMISSION_GRANTED
 
         //check if notification is granted (only sdk 33 and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+//            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+            permissionLauncher.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
         }
 
-        val readPermissionGranted = hasReadPermission
-        val writePermissionGranted = hasWritePermission
+//        val readPermissionGranted = hasReadPermission
+//        val writePermissionGranted = hasWritePermission
 
-        if (!readPermissionGranted) {
-            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-        if (!writePermissionGranted) {
-            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-        if (permissionsToRequest.isNotEmpty()) {
-            permissionLauncher.launch(permissionsToRequest.toTypedArray())
-        }
+//        if (!readPermissionGranted) {
+//            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+//        }
+//        if (!writePermissionGranted) {
+//            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//        }
+//        if (permissionsToRequest.isNotEmpty()) {
+//            permissionLauncher.launch(permissionsToRequest.toTypedArray())
+//        }
     }
+
+
+
 
 
     companion object {

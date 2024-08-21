@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_download"
+        android:icon="@drawable/download_icon_spotify"
+        android:iconTint="@color/white"
+        android:title="Download" />
+
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/history_icon"
+        android:iconTint="@color/white"
+        android:title="History" />
+
+    <item
+        android:id="@+id/navigation_help"
+        android:icon="@drawable/help_icon"
+        android:title="Help" />
+
+</menu>

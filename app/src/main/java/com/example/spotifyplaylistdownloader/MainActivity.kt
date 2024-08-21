@@ -28,12 +28,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -82,12 +84,32 @@ class MainActivity : AppCompatActivity() {
         appContext = this
         // widgets
 
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
         //initialize python
         if (! Python.isStarted()) { Python.start(AndroidPlatform(this)); }
 
         py = Python.getInstance()
         myModule= py.getModule("get_spotify_names")
         myFunNames = myModule["get_names"]!!
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            var selectedFragment: Fragment? = null
+
+            when (item.itemId) {
+                R.id.navigation_download -> selectedFragment = InputFragment()
+                R.id.navigation_history -> selectedFragment = DownloadHistoryFragment()
+                R.id.navigation_help -> selectedFragment = HelpFragment()
+            }
+
+            if (selectedFragment != null) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, selectedFragment)
+                    .commit()
+            }
+
+            true
+        }
 
     }
 
