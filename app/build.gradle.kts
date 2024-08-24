@@ -12,7 +12,8 @@ chaquopy {
             install("pytube")
             install("youtube-search-python")
             install("spotipy")
-            install("yt-dlp")
+            install("yt_dlp")
+            install("ffmpeg")
         }
     }
     productFlavors { }

@@ -1,12 +1,14 @@
-import pytube.exceptions
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy.exceptions import SpotifyException
 from youtubesearchpython import VideosSearch
-from pytube import YouTube
+import yt_dlp as youtube_dl
 import os
-import shutil
+import logging
 
+# Configure logging to help with debugging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # using spotipy
 def get_playlist_name(sp, playlist):
@@ -36,6 +38,7 @@ def get_thumbnail(sp, playlist):
     except SpotifyException:
         url = sp.album(playlist)["images"][0]["url"]
         return url
+
 
 def get_names_list(sp, playlist):
     try:
@@ -88,26 +91,54 @@ def get_names(playlist_link, action):
 
 # downloading and searching youtube
 def download(song, artist, directory):
+    # Ensure the directory exists
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
     # get the link
     song = song.encode("ascii", errors="replace").decode("ascii")
     search_result = VideosSearch(f"{song} {artist}", limit=1).result()
     if search_result and len(search_result) > 0:
         video_link = search_result["result"][0]["link"].encode("ascii", errors="replace").decode("ascii")
+        logger.debug(f"Video link found: {video_link}")
     else:
+        logger.error("No video link found.")
         return ""
 
     # download
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'outtmpl': os.path.join(directory, '%(title)s.%(ext)s'),
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        'quiet': False,  # Change to False to enable yt-dlp's verbose output for debugging
+        'noplaylist': True,
+        'no_warnings': True,
+        'ignoreerrors': True,
+        'logtostderr': True,
+    }
 
-    yt = YouTube(video_link)
     try:
-        output_file = yt.streams.get_audio_only(subtype="mp4").download(directory)
-        base_file = os.path.splitext(output_file)[0]
-        new_file = base_file + ".mp3"
-        os.rename(output_file, new_file)
-        #shutil.move(new_file, "/storage/emulated/0/Download/")
-    except pytube.exceptions.AgeRestrictedError:
-        print("age restricted, cannot download")
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(video_link, download=True)
+            logger.debug(f"Info dict: {info_dict}")
+            new_file = ydl.prepare_filename(info_dict).replace(".webm", ".mp3").replace(".m4a", ".mp3")
+
+            # Ensure the post-processing was successful and the file isn't empty
+            if os.path.exists(new_file) and os.path.getsize(new_file) > 0:
+                logger.info(f"Download successful: {new_file}")
+                return new_file
+            else:
+                logger.error("Download failed or resulted in an empty file.")
+                return ""
+    except youtube_dl.utils.DownloadError as e:
+        logger.error(f"An error occurred during download: {e}")
+        return ""
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
         return ""
 
-    return new_file
-
+    return ""

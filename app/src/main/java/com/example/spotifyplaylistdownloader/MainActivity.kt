@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         downloadDirecotry = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString()
+
         appContext = this
 
         // widgets
@@ -151,6 +152,7 @@ suspend fun singleDownload(artist: String, song: String, album: String) {
 
     val myFunDownload: PyObject? = myModule?.get("download")
 
+    Log.d("Download DIrecory", downloadDirecotry)
     val resultDownload = withContext(Dispatchers.IO) { myFunDownload?.call(song, artist, downloadDirecotry)}
     Log.println(Log.INFO, "download", "downloaded")
     saveToExternalStorage(resultDownload.toString(), song, artist, album, MainActivity.appContext)
