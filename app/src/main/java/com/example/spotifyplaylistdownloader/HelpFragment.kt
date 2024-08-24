@@ -1,5 +1,7 @@
 package com.example.spotifyplaylistdownloader
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.provider.MediaStore.Images.ImageColumns
 import androidx.fragment.app.Fragment
@@ -10,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import org.w3c.dom.Text
@@ -49,6 +52,9 @@ class HelpFragment : Fragment() {
     private var currentPosition = 0
     private val lengthResources = gifResources.size - 1
 
+    private var grayColor: Int? = null
+    private var whiteColor: Int? = null
+
 
 
 
@@ -68,6 +74,9 @@ class HelpFragment : Fragment() {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_help_fragmnet, container, false)
 
+        whiteColor = ContextCompat.getColor(requireContext(), R.color.white)
+        grayColor = ContextCompat.getColor(requireContext(), R.color.gray)
+
         buttonNext = view.findViewById<ImageButton>(R.id.arrow_next)
         buttonPrev = view.findViewById<ImageButton>(R.id.arrow_previous)
         infoText = view.findViewById<TextView>(R.id.stageInfo)
@@ -81,6 +90,8 @@ class HelpFragment : Fragment() {
             nextImage()
         }
 
+        //disable initialy previous button
+        buttonPrev.backgroundTintList = ColorStateList.valueOf(grayColor!!)
         buttonPrev.setOnClickListener {
             //check if we are already in the end
             previousImage()
@@ -93,6 +104,12 @@ class HelpFragment : Fragment() {
         //check if we are already in the end
         if (currentPosition < lengthResources) {
             currentPosition++
+
+            //disable the button next (with color)
+            buttonPrev.backgroundTintList = ColorStateList.valueOf(whiteColor!!)
+            if (currentPosition == lengthResources) {
+                buttonNext.backgroundTintList = ColorStateList.valueOf(grayColor!!)
+            }
 
             Glide.with(this)
                 .load(gifResources[currentPosition])
@@ -108,6 +125,12 @@ class HelpFragment : Fragment() {
         //check if we are already in the end
         if (currentPosition > 0) {
             currentPosition--
+
+            //disable the button next (with color)
+            buttonNext.backgroundTintList = ColorStateList.valueOf(whiteColor!!)
+            if (currentPosition == 0) {
+                buttonPrev.backgroundTintList = ColorStateList.valueOf(grayColor!!)
+            }
 
             Glide.with(this)
                 .load(gifResources[currentPosition])

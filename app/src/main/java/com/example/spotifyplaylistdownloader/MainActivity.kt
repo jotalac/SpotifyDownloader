@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
@@ -74,17 +75,25 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var songsAdapter: RecyclerAdapter
 
+    private var activeFragment: Fragment? = null
+    private var isPlaylistFragmentInitialized = false // Flag to track initialization
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
         downloadDirecotry = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString()
         appContext = this
-        // widgets
 
+        // widgets
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
+        // Set default fragment
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, InputFragment())
+                .commit()
+        }
 
         //initialize python
         if (! Python.isStarted()) { Python.start(AndroidPlatform(this)); }
@@ -110,8 +119,29 @@ class MainActivity : AppCompatActivity() {
 
             true
         }
-
     }
+
+
+//    private fun switchFragment(fragment: Fragment) {
+//        if (activeFragment != fragment) {
+//            supportFragmentManager.beginTransaction().hide(activeFragment!!).show(fragment).commit()
+//            activeFragment = fragment
+//        }
+//    }
+
+//    fun initializePlaylistFragment(bundle: Bundle) {
+//        val playlistFragmentVal = PlaylistFragment().apply {
+//            arguments = bundle
+//        }
+//
+//        supportFragmentManager.beginTransaction()
+//            .add(R.id.fragment_container, playlistFragmentVal, "3")
+//            .hide(activeFragment!!)
+//            .show(playlistFragmentVal)
+//            .commit()
+//        activeFragment = playlistFragmentVal
+//        isPlaylistFragmentInitialized = true
+//    }
 
 
 }

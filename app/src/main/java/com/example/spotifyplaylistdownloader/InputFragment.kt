@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,6 +27,8 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -45,6 +48,16 @@ class InputFragment : Fragment() {
 
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var clipboardManager: ClipboardManager
+    private lateinit var sharedViewModel: SharedViewModel
+
+    private lateinit var mainActivity: MainActivity
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is MainActivity) {
+            mainActivity = context
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +78,7 @@ class InputFragment : Fragment() {
         val continueButton = view.findViewById<Button>(R.id.continueButton)
         val pasteButton = view.findViewById<ImageButton>(R.id.pasteClipboardButton)
         val editText = view.findViewById<EditText>(R.id.editText)
+        val loadingBar = view.findViewById<ProgressBar>(R.id.loading_wheel)
 
 
         //initilaize the permission launcher
@@ -94,9 +108,11 @@ class InputFragment : Fragment() {
 
         }
 
+        loadingBar.visibility = View.INVISIBLE
 
         //button press action
         continueButton.setOnClickListener {
+
             //check if the user is connected
             val connected = checkInternetConnectivity(requireContext())
             if (!connected) {
@@ -107,6 +123,9 @@ class InputFragment : Fragment() {
                     .show()
                 return@setOnClickListener
             }
+            //show loading bar
+            loadingBar.visibility = View.VISIBLE
+            pasteButton.visibility = View.INVISIBLE
 
             val spotifyLink = editText.text.toString()
 
@@ -123,8 +142,12 @@ class InputFragment : Fragment() {
                 val vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 val pattern = longArrayOf(400, 200 , 400)
                 if (vibrator.hasVibrator()) {vibrator.vibrate(200)}
+                loadingBar.visibility = View.INVISIBLE
+                pasteButton.visibility = View.VISIBLE
             }
             else {
+
+
                 val bundle = Bundle().apply {
                     putString("link", spotifyLink)
                 }
@@ -135,7 +158,7 @@ class InputFragment : Fragment() {
 
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, playlistFragment)
-                    .addToBackStack(null)
+                    .addToBackStack("InputFragment")
                     .commit()
             }
         }

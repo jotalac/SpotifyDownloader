@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -40,7 +41,6 @@ class DownloadHistoryFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_download_history, container, false)
-
 
         //fill the recycler view
         var playlistData: MutableList<PlaylistHistory>? = MySharedPreferences(requireContext()).getPlaylistHistory("playlistHistory")

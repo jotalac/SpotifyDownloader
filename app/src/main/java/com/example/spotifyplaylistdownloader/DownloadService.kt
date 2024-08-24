@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
@@ -86,7 +87,11 @@ class DownloadService: Service() {
         //crete a button to stop the intent
         val actionIntent = Intent(mContext, MyBroadcastReceiver::class.java)
         actionIntent.action = "ACTION_BUTTON_CLICKED"
-        val actionPendingIntent = PendingIntent.getBroadcast(mContext, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val actionPendingIntent = PendingIntent.getBroadcast(
+            mContext,
+            0,
+            actionIntent,
+            PendingIntent.FLAG_IMMUTABLE)
 
         //create notification
         notificationBuilder = NotificationCompat.Builder(this, "downloading_channel")
@@ -96,7 +101,11 @@ class DownloadService: Service() {
             .setProgress(100, 0, false)
             .addAction(R.drawable.button_folder, "stop", actionPendingIntent)
 
-        startForeground(notificationId, notificationBuilder.build())
+        startForeground(
+            notificationId,
+            notificationBuilder.build(),
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        )
 
 
         //download process

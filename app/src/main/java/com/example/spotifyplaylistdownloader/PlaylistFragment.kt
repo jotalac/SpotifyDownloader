@@ -36,7 +36,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.appcompat.widget.Toolbar
-import androidx.navigation.fragment.findNavController
 import androidx.work.Data
 import jp.wasabeef.picasso.transformations.BlurTransformation
 import java.io.Serializable
@@ -86,7 +85,7 @@ class PlaylistFragment : Fragment(), ServiceCallback {
         downloadingBoolean = false
     }
 
-    fun cancelDownloadUI() {
+    private fun cancelDownloadUI() {
         downloadingBoolean = false
 
         //update ui button
@@ -143,12 +142,13 @@ class PlaylistFragment : Fragment(), ServiceCallback {
 
         //toolbar
         (activity as AppCompatActivity).apply {
-            setSupportActionBar(view.findViewById(R.id.toolbarPlaylist))
+            setSupportActionBar(toolbar)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
         toolbar.title = playlistNameString
         toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
+            parentFragmentManager.popBackStack()
+            //requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         //recycler view
@@ -224,28 +224,37 @@ class PlaylistFragment : Fragment(), ServiceCallback {
         val downloaded = mutableListOf<String>()
 
         downloadButton.setOnClickListener {
-            if (!downloadingBoolean) {
-                val intent = Intent(requireContext(), DownloadService::class.java).apply {
-                    action = DownloadService.Actions.START.toString()
+            try {
+                if (!downloadingBoolean) {
+                    val intent = Intent(requireContext(), DownloadService::class.java).apply {
+                        action = DownloadService.Actions.START.toString()
+                    }
+                    intent.putExtra("playlistName", playlistNameString)
+                    ContextCompat.startForegroundService(requireContext(), intent)
+                    downloadingBoolean = true
+
+
+                    //update ui
+                    downloadButton.text = "Cancel download"
+                    downloadButton.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.red
+                        )
+                    )
+                    songsAdapter.allStartDownload()
+
+                } else {
+                    val intent = Intent(requireContext(), DownloadService::class.java).apply {
+                        action = DownloadService.Actions.STOP.toString()
+                    }
+                    ContextCompat.startForegroundService(requireContext(), intent)
+
+                    //update ui
+                    cancelDownloadUI()
                 }
-                intent.putExtra("playlistName", playlistNameString)
-                ContextCompat.startForegroundService(requireContext(), intent)
-                downloadingBoolean = true
-
-
-                //update ui
-                downloadButton.text = "Cancel download"
-                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
-                songsAdapter.allStartDownload()
-
-            } else {
-                val intent = Intent(requireContext(), DownloadService::class.java).apply {
-                    action = DownloadService.Actions.STOP.toString()
-                }
-                ContextCompat.startForegroundService(requireContext(), intent)
-
-                //update ui
-                cancelDownloadUI()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
@@ -260,15 +269,7 @@ class PlaylistFragment : Fragment(), ServiceCallback {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                // Add your action here
-                // For example, you can navigate back
-                findNavController().navigateUp()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     companion object {
