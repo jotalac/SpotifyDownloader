@@ -8,6 +8,7 @@ import android.content.pm.ModuleInfo
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -76,7 +77,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var songsAdapter: RecyclerAdapter
 
     private var activeFragment: Fragment? = null
-    private var isPlaylistFragmentInitialized = false // Flag to track initialization
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -164,29 +164,51 @@ fun saveToExternalStorage(mp3Path: String, title: String, artist:String, album: 
     val contentResolver = context.contentResolver
     val audioCollection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
 
+    Log.d("names", "artist name: $artist, album name: $album")
+
     val contentValues = ContentValues().apply {
+        put(MediaStore.Audio.Media.IS_PENDING, 1)
         put(MediaStore.Audio.Media.DISPLAY_NAME, title)
         put(MediaStore.Audio.Media.ARTIST, artist)
         put(MediaStore.Audio.Media.ALBUM, album)
-        put(MediaStore.Audio.Media.RELATIVE_PATH, "Music")
+        put(MediaStore.Audio.Media.RELATIVE_PATH, "Music/")
         //put(MediaStore.Audio.Media.RELATIVE_PATH, mp3Path)
         put(MediaStore.Audio.Media.MIME_TYPE, "audio/mp3")
 
     }
+//    return try {
+//        contentResolver.insert(audioCollection, contentValues)?.also { uri ->
+//            contentResolver.openOutputStream(uri)?.use { outputStream ->
+//                FileInputStream(File(mp3Path)).use { inputStream ->
+//                    inputStream.copyTo(outputStream)
+//                }
+//            }
+//        }
+//        true
+//    } catch (e: IOException) {
+//        e.printStackTrace()
+//        false
+//    }
+
     return try {
-        contentResolver.insert(audioCollection, contentValues)?.also { uri ->
-            contentResolver.openOutputStream(uri)?.use { outputStream ->
+        val uri: Uri? = contentResolver.insert(audioCollection, contentValues)
+        uri?.let {
+            contentResolver.openOutputStream(it)?.use { outputStream ->
                 FileInputStream(File(mp3Path)).use { inputStream ->
                     inputStream.copyTo(outputStream)
                 }
             }
-        }
+
+            // After writing, set IS_PENDING to 0 to make the file visible to other apps
+            contentValues.clear()
+            contentValues.put(MediaStore.Audio.Media.IS_PENDING, 0)
+            contentResolver.update(it, contentValues, null, null)
+        } ?: throw IOException("Failed to create new MediaStore record.")
         true
     } catch (e: IOException) {
         e.printStackTrace()
         false
     }
-
 }
 
 

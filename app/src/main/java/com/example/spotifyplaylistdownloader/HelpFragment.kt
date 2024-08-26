@@ -1,9 +1,7 @@
 package com.example.spotifyplaylistdownloader
 
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
-import android.provider.MediaStore.Images.ImageColumns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,11 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import org.w3c.dom.Text
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

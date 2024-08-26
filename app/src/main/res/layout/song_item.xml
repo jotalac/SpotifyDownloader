@@ -19,6 +19,7 @@
         android:paddingTop="8dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:fontFamily="@font/spotify_text_medium"
         />
 
 <!--    <View-->
@@ -40,7 +41,8 @@
         android:paddingBottom="8dp"
         android:paddingStart="15dp"
         android:textSize="13dp"
-        android:textColor="@color/light_gray"/>
+        android:textColor="@color/light_gray"
+        android:fontFamily="@font/spotify_text_light"/>
 
     <TextView
         android:id="@+id/duration_view"
@@ -53,7 +55,8 @@
         android:paddingEnd="15dp"
         android:paddingStart="15dp"
         android:textSize="13dp"
-        android:textColor="@color/green"/>
+        android:textColor="@color/green"
+        android:fontFamily="@font/spotify_text_light"/>
 
     <ImageButton
         android:id="@+id/button_download_single"

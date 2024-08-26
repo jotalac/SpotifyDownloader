@@ -29,7 +29,7 @@ android {
 
         ndk {
             // On Apple silicon, you can omit x86_64.
-            abiFilters += listOf("arm64-v8a", "x86_64")
+            abiFilters += listOf("arm64-v8a", "x86_64", "x86")
         }
 
         applicationId = "com.example.spotifyplaylistdownloader"

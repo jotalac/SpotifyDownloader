@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.appcompat.widget.Toolbar
 import androidx.work.Data
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import jp.wasabeef.picasso.transformations.BlurTransformation
 import java.io.Serializable
 import kotlin.reflect.typeOf
@@ -63,6 +64,8 @@ class PlaylistFragment : Fragment(), ServiceCallback {
     lateinit var songsAdapter: RecyclerAdapter
     lateinit var downloadButton: Button
 
+    private lateinit var mainActivity: MainActivity
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -70,6 +73,13 @@ class PlaylistFragment : Fragment(), ServiceCallback {
             param2 = it.getString(ARG_PARAM2)
         }
 
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is MainActivity) {
+            mainActivity = context
+        }
     }
 
     override fun onSongDownloaded(song: String) {
@@ -125,6 +135,7 @@ class PlaylistFragment : Fragment(), ServiceCallback {
         //get link from the previous fragment
         val playlistLink = arguments?.getString("link").toString()
         val playlistNameString = myFunNames.call(playlistLink, "pl_name").toString()
+        playlistName = playlistNameString
 
         //add playlist to history shared preferences
         val sharedPreferences = MySharedPreferences(requireContext())
@@ -139,6 +150,9 @@ class PlaylistFragment : Fragment(), ServiceCallback {
         val playlistTextView = view.findViewById<TextView>(R.id.playlistName)
         downloadButton = view.findViewById<Button>(R.id.downloadButton)
         val toolbar = view.findViewById<Toolbar>(R.id.toolbarPlaylist)
+
+        val bottomNavBar = mainActivity.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavBar.visibility = View.INVISIBLE
 
         //toolbar
         (activity as AppCompatActivity).apply {

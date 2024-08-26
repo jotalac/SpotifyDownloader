@@ -18,14 +18,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"
         android:orientation="vertical"
-        android:gravity="center"
-
+        android:gravity="top|center"
         >
 
         <TextView
@@ -33,7 +31,10 @@
             android:layout_height="wrap_content"
             android:text="How to get the playlist link?"
             android:textColor="@color/white"
-            android:textSize="25dp"/>
+            android:textSize="25dp"
+            android:fontFamily="@font/spotify_text_bold"
+            android:layout_marginTop="40dp"
+            />
 
         <TextView
             android:id="@+id/stageInfo"
@@ -45,6 +46,7 @@
             android:textColor="@color/light_gray"
             android:textAlignment="center"
             android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/spotify_text_light"
             />
 
         <ImageView
@@ -61,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="60dp"
             android:layout_gravity="center">
 
             <ImageButton

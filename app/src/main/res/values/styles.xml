@@ -9,4 +9,16 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">10dp</item> <!-- Adjust the radius as per your preference -->
     </style>
+
+<!--    styles for bottom nav bar-->
+    <style name="BottomNavTextAppearanceActive" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/spotify_text_light</item> <!-- Custom font family -->
+        <item name="android:textSize">11sp</item>
+    </style>
+
+<!--    <style name="BottomNavTextAppearanceInactive" parent="TextAppearance.AppCompat.Medium">-->
+<!--        <item name="android:fontFamily">@font/your_custom_font</item> &lt;!&ndash; Custom font family &ndash;&gt;-->
+<!--        <item name="android:textSize">14sp</item> &lt;!&ndash; Custom text size (optional) &ndash;&gt;-->
+<!--        <item name="android:textColor">@color/your_inactive_color</item> &lt;!&ndash; Custom text color for inactive state (optional) &ndash;&gt;-->
+<!--    </style>-->
 </resources>

@@ -29,6 +29,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -80,6 +81,8 @@ class InputFragment : Fragment() {
         val editText = view.findViewById<EditText>(R.id.editText)
         val loadingBar = view.findViewById<ProgressBar>(R.id.loading_wheel)
 
+        val bottomNavBar = mainActivity.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavBar.visibility = View.VISIBLE
 
         //initilaize the permission launcher
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
