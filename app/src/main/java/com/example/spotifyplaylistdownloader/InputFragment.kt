@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -52,6 +53,7 @@ class InputFragment : Fragment() {
     private lateinit var sharedViewModel: SharedViewModel
 
     private lateinit var mainActivity: MainActivity
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -66,6 +68,7 @@ class InputFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        sharedPref = requireContext().getSharedPreferences("MySP", Context.MODE_PRIVATE)
     }
 
     override fun onCreateView(
@@ -154,6 +157,10 @@ class InputFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("link", spotifyLink)
                 }
+
+                sharedPref.edit().putString("link", spotifyLink).apply()
+                Log.println(Log.INFO, "testInp", sharedPref.getString("link", "") ?: ""
+                )
 
                 val playlistFragment = PlaylistFragment().apply {
                     arguments = bundle

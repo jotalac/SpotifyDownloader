@@ -4,12 +4,14 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BlurMaskFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.ContactsContract
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -66,12 +68,19 @@ class PlaylistFragment : Fragment(), ServiceCallback {
 
     private lateinit var mainActivity: MainActivity
 
+    private lateinit var sharedPref: SharedPreferences
+
+
+    private var playlistName: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+        sharedPref = requireContext().getSharedPreferences("MySP", Context.MODE_PRIVATE)
 
     }
 
@@ -194,6 +203,29 @@ class PlaylistFragment : Fragment(), ServiceCallback {
         recyclerView.adapter = songsAdapter
 
 
+        //restore recycler view
+        Log.d("febug", savedInstanceState.toString())
+        if (savedInstanceState != null) {
+            // Restore the state of the songs
+            val songStates = savedInstanceState.getParcelableArrayList<Song>("songs_state")
+            if (songStates != null) {
+                songsAdapter.updateSongsState(songStates)
+            }
+
+            // Restore the state of the download button
+            downloadingBoolean = savedInstanceState.getBoolean("downloading_state")
+            playlistName = savedInstanceState.getString("playlist_name")
+
+            if (downloadingBoolean) {
+                downloadButton.text = "Cancel download"
+                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
+            } else {
+                downloadButton.text = "Download"
+                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+            }
+        }
+
+
         //set playlist name
         playlistTextView.text = playlistNameString
 
@@ -305,4 +337,19 @@ class PlaylistFragment : Fragment(), ServiceCallback {
                 }
             }
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // Save the state of each song
+        val songStates = songsAdapter.getSongsState()
+        Log.d("PlaylistFragment", "Saving state: $songStates")
+        outState.putParcelableArrayList("songs_state", songStates)
+
+        // Save the state of the download button
+        outState.putBoolean("downloading_state", downloadingBoolean)
+        outState.putString("playlist_name", playlistName)
+    }
+
+
 }

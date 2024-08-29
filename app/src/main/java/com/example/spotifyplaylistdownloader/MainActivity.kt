@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.ModuleInfo
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
@@ -13,6 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.TextUtils.replace
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -77,10 +79,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var songsAdapter: RecyclerAdapter
 
     private var activeFragment: Fragment? = null
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        sharedPref = this.getSharedPreferences("MySP", Context.MODE_PRIVATE)
 
         downloadDirecotry = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString()
 
@@ -122,28 +127,58 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-//    private fun switchFragment(fragment: Fragment) {
-//        if (activeFragment != fragment) {
-//            supportFragmentManager.beginTransaction().hide(activeFragment!!).show(fragment).commit()
-//            activeFragment = fragment
+//    override fun onNewIntent(intent: Intent) {
+//        super.onNewIntent(intent)
+////
+////        val fragmentToOpen = intent.getStringExtra("fragment")
+////
+////        if (fragmentToOpen == "DownloadFragment") {
+////            val playlistName = intent.getStringExtra("playlistName") as String
+////            val downloadFragment = PlaylistFragment.newInstance(playlistName, "")
+////            supportFragmentManager.beginTransaction()
+////                .replace(R.id.fragment_container, downloadFragment)
+////                .commit()
+////        }
+//        if (intent?.getBooleanExtra("OPEN_INPUT_FRAGMENT", false) == true) {
+//            // Navigate to InputFragmentsupportFragmentManager.beginTransaction()
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.fragment_container, PlaylistFragment()) // Replace with your actual container ID
+//                .commit()
 //        }
 //    }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // Check if the intent contains the flag to open PlaylistFragment
+        if (intent.getBooleanExtra("OPEN_PLAYLIST_FRAGMENT", false)) {
+            // If the fragment is already in the fragment manager, bring it to the front
+            val fragment = supportFragmentManager.findFragmentByTag("PlaylistFragment")
 
-//    fun initializePlaylistFragment(bundle: Bundle) {
-//        val playlistFragmentVal = PlaylistFragment().apply {
-//            arguments = bundle
-//        }
-//
-//        supportFragmentManager.beginTransaction()
-//            .add(R.id.fragment_container, playlistFragmentVal, "3")
-//            .hide(activeFragment!!)
-//            .show(playlistFragmentVal)
-//            .commit()
-//        activeFragment = playlistFragmentVal
-//        isPlaylistFragmentInitialized = true
-//    }
+            if (fragment != null) {
+                // Fragment exists, bring it to the front
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit()
+            } else {
+                // Fragment doesn't exist, create it and pass necessary data
+                val playlistName = intent.getStringExtra("playlistName") ?: ""
+                val playlistLink = sharedPref.getString("link", "") ?: ""
+                val playlistFragment = PlaylistFragment.newInstance(playlistName, playlistLink).apply {
+                    arguments = Bundle().apply {
+                        putString("link", playlistLink)
+                    }
+                }
 
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.fragment_container, playlistFragment, "PlaylistFragment")
+                    .commit()
+            }
+        } else if (intent.getBooleanExtra("OPEN_INPUT_FRAGMENT", false)) {
+            // Handle the input fragment case
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, InputFragment())
+                .commit()
+        }
+    }
 
 }
 
@@ -156,7 +191,7 @@ suspend fun singleDownload(artist: String, song: String, album: String) {
     val resultDownload = withContext(Dispatchers.IO) { myFunDownload?.call(song, artist, downloadDirecotry)}
     Log.println(Log.INFO, "download", "downloaded")
     saveToExternalStorage(resultDownload.toString(), song, artist, album, MainActivity.appContext)
-    Log.println(Log.INFO, "download", "added to media stor")
+    Log.println(Log.INFO, "download", "added to media store")
 
 }
 
@@ -176,19 +211,7 @@ fun saveToExternalStorage(mp3Path: String, title: String, artist:String, album: 
         put(MediaStore.Audio.Media.MIME_TYPE, "audio/mp3")
 
     }
-//    return try {
-//        contentResolver.insert(audioCollection, contentValues)?.also { uri ->
-//            contentResolver.openOutputStream(uri)?.use { outputStream ->
-//                FileInputStream(File(mp3Path)).use { inputStream ->
-//                    inputStream.copyTo(outputStream)
-//                }
-//            }
-//        }
-//        true
-//    } catch (e: IOException) {
-//        e.printStackTrace()
-//        false
-//    }
+
 
     return try {
         val uri: Uri? = contentResolver.insert(audioCollection, contentValues)

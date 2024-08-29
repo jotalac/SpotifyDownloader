@@ -97,6 +97,15 @@ class RecyclerAdapter(private var songs: ArrayList<Song>) : RecyclerView.Adapter
         return songs.size
     }
 
+    fun getSongsState(): ArrayList<Song> {
+        return songs
+    }
+
+    fun updateSongsState(songStates: ArrayList<Song>) {
+        songs = songStates
+        notifyDataSetChanged()
+    }
+
     class SongViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val songName = view.findViewById<TextView>(R.id.song_name)
         val artistName = view.findViewById<TextView>(R.id.artist_name)

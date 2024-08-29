@@ -84,9 +84,34 @@ class DownloadService: Service() {
     }
 
     private fun start(playlistNameString: String) {
+        // Create an intent to open the MainActivity
+        val openPlaylistFragmentIntent = Intent(this, MainActivity::class.java).apply {
+//            action = Intent.ACTION_MAIN
+//            addCategory(Intent.CATEGORY_LAUNCHER)
+//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+//
+//            // Pass necessary data to the activity
+//            putExtra("fragment", "DownloadFragment")
+//            putExtra("playlistName", playlistNameString)
+            action = Intent.ACTION_MAIN
+            addCategory(Intent.CATEGORY_LAUNCHER)
+            putExtra("OPEN_PLAYLIST_FRAGMENT", true) // Add an extra flag
+            putExtra("playlistName", playlistNameString) // Pass playlist name or any relevant data
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            openPlaylistFragmentIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         //crete a button to stop the intent
-        val actionIntent = Intent(mContext, MyBroadcastReceiver::class.java)
-        actionIntent.action = "ACTION_BUTTON_CLICKED"
+        val actionIntent = Intent(mContext, MyBroadcastReceiver::class.java).apply{
+            action = "ACTION_BUTTON_CLICKED"
+        }
         val actionPendingIntent = PendingIntent.getBroadcast(
             mContext,
             0,
@@ -99,7 +124,9 @@ class DownloadService: Service() {
             .setContentTitle("Downloading - $playlistNameString")
             .setContentText("0%")
             .setProgress(100, 0, false)
-            .addAction(R.drawable.button_folder, "stop", actionPendingIntent)
+            .addAction(R.drawable.button_folder, "Stop download", actionPendingIntent)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
 
         startForeground(
             notificationId,
