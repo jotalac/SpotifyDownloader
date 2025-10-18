@@ -77,8 +77,8 @@ def get_names_list(sp, playlist):
 
 
 def get_names(playlist_link, action):
-    client_id = "3095cef11f7a4b8681759c1584dd83f8"
-    client_secret = "0be2463d4d9f460085871bb0f0447c69"
+    client_id = "change_this"
+    client_secret = "change_this"
     playlist_id = playlist_link.split("/")[-1].split("?")[0]
 
     client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
